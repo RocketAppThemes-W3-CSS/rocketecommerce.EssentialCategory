@@ -64,10 +64,6 @@
     $(document).ready(function () {
         // SESSIONPARAMS SO THEY ARE AVAILABLE FOR REMOTE SERVER RENDERING.
         simplisity_setSessionField('culturecode', '@sessionParams.CultureCode');
-
-        // get minicart to avoid cache problem with wrong amount.
-        $('#minicartdisplay').getSimplisity('@(sessionParams.ApiUrl)', 'remote_minicart', '{"template":"MiniCart.cshtml","moduleref":"@(sessionParams.ModuleRef)"}', '', '')
-
     });
 
 
