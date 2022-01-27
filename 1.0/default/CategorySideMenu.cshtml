@@ -39,7 +39,7 @@
                 toplevelclass = "catlevel1";
             }
         }
-        var productListUrl = sessionParams.PageUrl + categoryData.UrlTokens(portalShop.ProductListPageUrl, sessionParams.Page, sessionParams.PageSize, sessionParams.Get("orderbyref"));
+        var productListUrl = categoryData.CategoryUrl(sessionParams);
         <div class="@selectedcolor @toplevelclass">
             <a href="@productListUrl" class="categoryitem" onclick="$('.simplisity_loader').show();" catid="@categoryData.CategoryId">
                 @if (categoryData.Level > 0)
