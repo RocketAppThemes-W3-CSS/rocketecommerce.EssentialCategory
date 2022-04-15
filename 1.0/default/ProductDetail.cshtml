@@ -7,14 +7,21 @@
 @AddProcessData("resourcepath", "/DesktopModules/DNNrocket/api/App_LocalResources/")
 @AddProcessData("resourcepath", "/DesktopModules/DNNrocketModules/RocketECommerce/App_LocalResources/")
 
-@{ var productData = (ProductLimpet)Model.GetDataObject("productdata");
-                var companyData = (CompanyLimpet)Model.GetDataObject("companydata"); ;
-                var cartData = (CartLimpet)Model.GetDataObject("cartdata");
-                var sessionParams = (SessionParams)Model.SessionParamsData;
-                var portalShop = productData.PortalShop;
-                var portalData = new PortalLimpet(PortalUtils.GetCurrentPortalId());
-                var remoteModule = (RemoteModule)Model.GetDataObject("remotemodule");
-                var appTheme = (AppThemeLimpet)Model.GetDataObject("apptheme"); }
+@{ 
+    var productData = (ProductLimpet)Model.GetDataObject("productdata");
+    var companyData = (CompanyLimpet)Model.GetDataObject("companydata");
+    var cartData = (CartLimpet)Model.GetDataObject("cartdata");
+    var sessionParams = (SessionParams)Model.SessionParamsData;
+    var portalShop = productData.PortalShop;
+    var portalData = new PortalLimpet(PortalUtils.GetCurrentPortalId());
+    var remoteModule = (RemoteModule)Model.GetDataObject("remotemodule");
+    var appTheme = (AppThemeLimpet)Model.GetDataObject("apptheme");
+
+    var hbsDict = new Dictionary<string, SimplisityInfo>();
+    hbsDict.Add("sessionparams", sessionParams.Info);
+    hbsDict.Add("resxlist", RenderRazorUtils.GetResxPaths(Processdata));
+    hbsDict.Add("data", productData.Info);
+}
 
 @if (portalShop.DebugMode)
 {
@@ -23,137 +30,20 @@
 
 @AddProcessData("resourcepath", "/DesktopModules/RocketThemes/" + remoteModule.AppThemeFolder + "/" + remoteModule.AppThemeVersion + "/resx/")
 
-<div class="productdetailflex">
 
-    <div class="productdetail">
-
-        <div id="datasection">
-
-            <div id="datalist2">
-                @{ var logoRelPath = productData.LogoRelPath;
-                    if (productData.LogoRelPath == "")
-                    {
-                        logoRelPath = "/DesktopModules/DNNrocket/api/images/noimage2.png";
-                    } }
-                <div onclick="window.history.back()" class="w3-button" style="float:right;" title="@productData.Name">@ButtonText(ButtonTypes.back, sessionParams.CultureCode)</div>
-
-                <h1>@productData.Name</h1>
-                <div>@(productData.Ref)</div>
-                <div class="w3-animate-opacity  productdatasection" id="productdatasection@(productData.ProductId)">
-
-                    <div class="productquickview">
-
-                        <div class="quickviewimage">
-                            <img src="@ThumbnailImageWebsiteDomainUrl(portalData.EngineUrlWithProtocol,logoRelPath,450, 450)" popupsrc="@ThumbnailImageWebsiteDomainUrl(portalData.EngineUrlWithProtocol, logoRelPath, 800, 0)" class="imgrollovertarget" alt="@productData.Name" onclick="popupImage(this)" />
-                            @if (productData.GetImages().Count > 1)
-                            {
-                <div class="quickviewgallery">
-                    @{ var imgLp = 1; }
-                    @foreach (var i in productData.GetImages())
-                    {
-                        if (imgLp <= 5)
-                        {
-    <img src="@ThumbnailImageWebsiteDomainUrl(portalData.EngineUrlWithProtocol, i.RelPath, 450, 450)" popupsrc="@ThumbnailImageWebsiteDomainUrl(portalData.EngineUrlWithProtocol, i.RelPath, 800, 0)" class="imgrollover" />}
-imgLp += 1;
-}
-                </div>}
-                        </div>
-
-                        <div class="quickviewcontent">
-
-                            @if (productData.GetModelList().Count > 1)
-                            {
-                <div class="w3-hide-small "><b>@ResourceKey("RE.from", sessionParams.CultureCode)</b></div>}
-
-                            @if (productData.SalePriceMinimum > 0)
-                            {
-                <div class="quickviewprice">
-                    <span>&nbsp;@productData.SalePriceMinimumDisplay()</span>
-                    <span style="text-decoration:line-through;" class="w3-small">@productData.PriceMinimumDisplay()</span>
-                </div> }
-            else
-            {
-<div class="quickviewprice">
-    @productData.PriceMinimumDisplay()
-</div>}
-                            <div class="quickviewsummary">@BreakOf(productData.Summary)</div>
-                            <div class="quickviewmodels">
-                                @{ var displaymodels = "displaymodels"; }
-                                @if (productData.GetModels().Count > 1)
-                                {
-                                    displaymodels = "";
-                                }
-                                <div id="modelinput@(productData.ProductId)" class="w3-white w3-margin-bottom modelinput @displaymodels">@ModelDropdown(productData)</div>
-                                <div id="optionsinput@(productData.ProductId)" class="w3-white w3-margin-bottom modelinput">@OptionsInput(productData)</div>
-                            </div>
-
-                            <div id="qtyinput@(productData.ProductId)" class="quickviewactions">
-                                <div class="quickviewqty">
-                                    <div class="w3-bar">
-                                        <div class="w3-bar-item w3-border w3-col w3-center w3-button product-subtract" productid="@(productData.ProductId)">&minus;</div>
-                                        <input type="number" min="0" class="w3-bar-item w3-col w3-input w3-border-top w3-border-bottom w3-center qtyvalue" id="qty@(productData.ProductId)" s-xpath="genxml/textbox/qty" value="1" style="width:60px;" />
-                                        <div class="w3-bar-item w3-border w3-col w3-center w3-button product-plus" productid="@(productData.ProductId)">&plus;</div>
-                                    </div>
-                                </div>
-                                <div class="quickviewbuy">
-                                    <a href="javascript:void(0)" onclick="addproducttocart('@productData.ProductId','#productdatasection@(productData.ProductId)');" rel="nofollow" class="w3-button buybutton" title="@ResourceKey("RE.addtobasket", sessionParams.CultureCode)" style="width:60px;">@MaterialIcon("shopping_cart")</a>
-                                </div>
-                            </div>
-
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-
+<div class="w3-row">
+    <div class="w3-threequarter">
+        <div class="w3-row">
+            @RenderHandleBarsRE(hbsDict, appTheme, "productdetail.hbs", remoteModule.ModuleRef, "")
         </div>
-
     </div>
-
-    <div class="productlistside">
-
-        <!-- Cart (Include design to stop flicker on the page) -->
+    <div class="w3-quarter">
         <div id="minicartdisplay" class="productlistcart">
-            @{ Model.SetSetting("zerototal", "True"); }
             @RenderTemplate("MiniCart.cshtml", appTheme, Model)
         </div>
-
         <div class="productlistcat">
             @RenderTemplate("CategorySideMenu.cshtml", appTheme, Model)
         </div>
-
     </div>
-
 </div>
 
-<div id="modalimgPopup" class="w3-modal w3-center" onclick="this.style.display='none'">
-    <img class="w3-animate-zoom" id="imgPopup" style="">
-</div>
-
-<script>
-
-    $(document).ready(function () {
-
-        $('.product-subtract').unbind("click");
-        $('.product-subtract').click(function () {
-            updateQty($(this).attr("productid"), -1)
-            return false; // prevent the button click from happening
-        });
-        $('.product-plus').unbind("click");
-        $('.product-plus').click(function () {
-            updateQty($(this).attr("productid"), 1)
-            return false; // prevent the button click from happening
-        });
-
-        $('.imgrollover').unbind("mouseover");
-        $(".imgrollover").mouseover(function () {
-            $('.imgrollovertarget').attr('src', $(this).attr('src'));
-            $('.imgrollovertarget').attr('popupsrc', $(this).attr('popupsrc'));
-        });
-
-        // get minicart to avoid cache problem with wrong amount.
-        $('#minicartdisplay').getSimplisity('@(sessionParams.ApiUrl)', 'remote_minicart', '{"template":"MiniCart.cshtml","moduleref":"@(sessionParams.ModuleRef)"}', '', '')
-
-    });
-
-</script>
