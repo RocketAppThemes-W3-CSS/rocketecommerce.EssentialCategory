@@ -16,6 +16,7 @@
     var portalData = new PortalLimpet(PortalUtils.GetCurrentPortalId());
     var remoteModule = (RemoteModule)Model.GetDataObject("remotemodule");
     var appTheme = (AppThemeLimpet)Model.GetDataObject("apptheme");
+    var categoryDataList = (CategoryLimpetList)Model.GetDataObject("categorydatalist");
 
     var hbsDict = new Dictionary<string, SimplisityInfo>();
     hbsDict.Add("sessionparams", sessionParams.Info);
@@ -42,7 +43,10 @@
             @RenderTemplate("MiniCart.cshtml", appTheme, Model)
         </div>
         <div class="productlistcat">
-            @RenderTemplate("CategorySideMenu.cshtml", appTheme, Model)
+            @if (categoryDataList.DataList.Count > 0)
+            {
+                @RenderTemplate("CategorySideMenu.cshtml", appTheme, Model)                
+            }
         </div>
     </div>
 </div>
